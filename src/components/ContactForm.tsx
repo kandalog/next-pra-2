@@ -1,0 +1,40 @@
+import React from "react";
+
+export default function ContactForm() {
+  return (
+    <div className="container mx-auto">
+      <form action="">
+        <div className="py-24 text-gray-500">
+          <div className="max-auto flex flex-col bg-white shadow-md p-8 md:w-1/2">
+            <h2 className="text-lg mb-2">お問い合わせ</h2>
+            <div className="mb-4">
+              <label htmlFor="" className="text-sm">
+                名前
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none py-1 px-3 leading-8"
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="" className="text-sm">
+                メールアドレス
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none py-1 px-3 leading-8"
+              />
+            </div>
+            <button className="text-white bg-indigo-500 hover:bg-indigo-600 rounded text-lg py-4">
+              送信
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  );
+}
