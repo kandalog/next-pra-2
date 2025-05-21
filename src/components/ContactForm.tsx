@@ -1,9 +1,10 @@
 import React from "react";
+import { submitContactForm } from "@/lib/actions/contact";
 
 export default function ContactForm() {
   return (
     <div className="container mx-auto">
-      <form action="">
+      <form action={submitContactForm}>
         <div className="py-24 text-gray-500">
           <div className="max-auto flex flex-col bg-white shadow-md p-8 md:w-1/2">
             <h2 className="text-lg mb-2">お問い合わせ</h2>
@@ -24,8 +25,8 @@ export default function ContactForm() {
               </label>
               <input
                 type="text"
-                id="name"
-                name="name"
+                id="email"
+                name="email"
                 className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none py-1 px-3 leading-8"
               />
             </div>
