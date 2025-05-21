@@ -1,13 +1,43 @@
 "use client";
 
-import React, { useActionState } from "react";
+import React, { useActionState, useState } from "react";
 import { submitContactForm } from "@/lib/actions/contact";
+import { ContactSchema } from "@/validations/contact";
+import { z } from "zod";
 
 export default function ContactForm() {
   const [state, formAction] = useActionState(submitContactForm, {
     success: false,
     errors: {},
   });
+
+  // client validation
+  const [clientErrors, setClientErrors] = useState({ name: "", email: "" });
+
+  const handleOnBlue = (e: React.FocusEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    try {
+      if (name === "name") {
+        ContactSchema.pick({ name: true }).parse({ name: value });
+      } else if (name === "email") {
+        ContactSchema.pick({ email: true }).parse({ email: value });
+      }
+
+      setClientErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const errorMessage = error.errors[0]?.message || "";
+        setClientErrors((prev) => ({
+          ...prev,
+          [name]: errorMessage,
+        }));
+      }
+    }
+  };
 
   return (
     // error
@@ -26,7 +56,11 @@ export default function ContactForm() {
                 id="name"
                 name="name"
                 className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none py-1 px-3 leading-8"
+                onBlur={handleOnBlue}
               />
+              {clientErrors.name && (
+                <p className="text-red-500 text-sm mt-1">{clientErrors.name}</p>
+              )}
               {state.errors.name && (
                 <p className="text-red-500 text-sm mt-1">
                   {state.errors.name.join(",")}
@@ -42,7 +76,13 @@ export default function ContactForm() {
                 id="email"
                 name="email"
                 className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none py-1 px-3 leading-8"
+                onBlur={handleOnBlue}
               />
+              {clientErrors.email && (
+                <p className="text-red-500 text-sm mt-1">
+                  {clientErrors.email}
+                </p>
+              )}
               {state.errors.email && (
                 <p className="text-red-500 text-sm mt-1">
                   {state.errors.email.join(",")}
