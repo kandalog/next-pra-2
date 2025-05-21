@@ -2,7 +2,19 @@
 import { ContactSchema } from "@/validations/contact";
 import { redirect } from "next/navigation";
 
-export async function submitContactForm(formData: FormData) {
+type ActionState = {
+  success: boolean;
+  errors: {
+    name?: string[];
+    email?: string[];
+  };
+  saverError?: string;
+};
+
+export async function submitContactForm(
+  prevState: ActionState,
+  formData: FormData
+): Promise<ActionState> {
   console.log("start server action");
 
   const name = formData.get("name");
@@ -12,9 +24,15 @@ export async function submitContactForm(formData: FormData) {
   const validationResult = ContactSchema.safeParse({ name, email });
   if (!validationResult.success) {
     // エラーメッセージの取得 flattenでエラーを見やすく加工する
-    const errors = validationResult.error.flatten();
+    const errors = validationResult.error.flatten().fieldErrors;
     console.log("バリデーションエラー", errors);
-    return { success: false, errors: errors.fieldErrors };
+    return {
+      success: false,
+      errors: {
+        name: errors.name || [],
+        email: errors.email || [],
+      },
+    };
   }
 
   console.log("pass the if statement");
