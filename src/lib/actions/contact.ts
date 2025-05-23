@@ -2,6 +2,8 @@
 import { ContactSchema } from "@/validations/contact";
 import { redirect } from "next/navigation";
 
+import { prisma } from "@/lib/prisma";
+
 type ActionState = {
   success: boolean;
   errors: {
@@ -17,8 +19,8 @@ export async function submitContactForm(
 ): Promise<ActionState> {
   console.log("start server action");
 
-  const name = formData.get("name");
-  const email = formData.get("email");
+  const name = formData.get("name") as string;
+  const email = formData.get("email") as string;
 
   // バリデーション
   const validationResult = ContactSchema.safeParse({ name, email });
@@ -38,6 +40,25 @@ export async function submitContactForm(
   console.log("pass the if statement");
 
   // DB登録
+  // メールアドレスが存在しているかの確認
+  const existingRecord = await prisma.contact.findUnique({
+    where: { email: email },
+  });
+
+  if (existingRecord) {
+    return {
+      success: false,
+      errors: {
+        name: [],
+        email: ["このメールアドレスは既に登録されています"],
+      },
+    };
+  }
+
+  // DBに保存
+  await prisma.contact.create({
+    data: { name, email },
+  });
 
   console.log("送信されたデータ", { name, email });
 
